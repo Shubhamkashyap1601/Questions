@@ -1,20 +1,31 @@
 class Solution {
 public:
-     //declare dp array for length, max number till now, no of max elements till now because these values are varying.
-    int dp[102][102][102];
-    const int mod = 1e9+7;
-    int solve(int n,int m,int k,int max_num_till_now,int search_space){
-        if(n==0 && search_space==k) return 1;
-        if(n==0) return 0;
-        if(dp[n][max_num_till_now][search_space]!=-1) return dp[n][max_num_till_now][search_space];
-        int sum=0;
-        for(int i=1;i<=m;i++){         
-            sum=((sum%mod)+(solve(n-1,m,k,(max_num_till_now>i?max_num_till_now:i),search_space+(max_num_till_now<i?1:0))%mod))%mod;
-        }
-        return dp[n][max_num_till_now][search_space]=sum;
-    }
     int numOfArrays(int n, int m, int k) {
-        memset(dp,-1,sizeof(dp));
-        return solve(n,m,k,0,0);
+        long P = 1000000007;
+        long f[55][105][55];
+            for (int j = 1; j <= m; j++) {
+        f[1][j][1] = 1;
     }
+    
+    for (int i = 2; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            for (int k1 = 1; k1 <= k; k1++) {
+                f[i][j][k1] = 0;
+                
+                for (int j1 = 1; j1 < j; j1++) {
+                    f[i][j][k1] = (f[i][j][k1] + f[i - 1][j1][k1 - 1]) % P;
+                }
+                
+                f[i][j][k1] = (f[i][j][k1] + (j * f[i - 1][j][k1]) % P) % P;
+            }
+        }
+    }
+    
+    long ans = 0;
+    for (int j = 1; j <= m; j++) {
+        ans = (ans + f[n][j][k]) % P;
+    }
+    
+    return (int) ans;
+}
 };
